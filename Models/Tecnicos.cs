@@ -2,11 +2,12 @@
 
 namespace RegistroTecnicos.Models
 {
-    public class Tecnicos
+    public class Tecnico
     {
         [Key]
-       public int TecnicoId { get; set;}
+       public int TecnicoID { get; set;}
         [Required(ErrorMessage = " El Campo Descripci&oacute;n es obligatorio")]
-       public string? Descripcion { get; set; }
+        public string? Nombres { get; set; }
+       public int SueldoHora { get; set; }
     }
 }
