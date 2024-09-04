@@ -1,56 +1,42 @@
-﻿@page "/Prioridad/Details"
-@page "/Prioridad/Details/{PrioridadId:int}"
-@inject PrioridadService PrioridadService
-@inject NavigationManager navigationManager
+﻿@page "/Tecnico/Details/{TecnicoId:int}"
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager;
 @rendermode InteractiveServer
 
-<PageTitle>Detalles de Prioridades</PageTitle>
-
-@if (Prioridad != null)
-{
-    <div class="container">
-        <div class="card shadow-header">
-            <div class="card-header  bg-primary text-white text-center py-2 rounded">
-                <h3 class="text-center"><strong>Detalles de la Prioridad</strong></h3>
-            </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                <li><strong>PrioridadId:</strong> @Prioridad.PrioridadId</li>
-                                <li><strong>Descripción:</strong> @Prioridad.Descripcion</li>
-                                <li><strong>Días Compromiso:</strong> @Prioridad.DiasCompromiso</li>
-                            </ul>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="card-footer">
-                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
-            </div>
-        </div>
+<div class="card">
+    <div class="card-header bg-red">
+        <h2>Detalles del T&eacute;cnico </h2>
     </div>
-}
-else
-{
-    <p>Prioridad no encontrada.</p>
-}
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ID:</dt>
+            <dd class="col-sm-9">@Tecnico!.TecnicoID</dd>
 
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@Tecnico.Nombres</dd>
+
+            <dt class="col-sm-3">Sueldo Hora:</dt>
+            <dd class="col-sm-9">@Tecnico.SueldoHora</dd>
+
+        </dl>
+    </div>
+    <div class="card-footer text-lg-center">
+        <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+    </div>
+</div>
 @code {
     [Parameter]
-    public int PrioridadId { get; set; }
-    public Prioridades? Prioridad { get; set; } = new Prioridades();
+    public int TecnicoID { get; set; }
+    public Tecnico? Tecnico { get; set; } = new Tecnico();
+    public string Notification { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        Prioridad = await PrioridadService.Buscar(PrioridadId);
+        Tecnico!.TecnicoID = TecnicoID;
+        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoID);
     }
-
     public void Volver()
     {
-        navigationManager.NavigateTo("/Prioridad/Index");
+        navigationManager.NavigateTo("/Tecnico/Index");
     }
 }

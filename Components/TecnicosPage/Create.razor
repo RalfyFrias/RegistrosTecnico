@@ -1,105 +1,92 @@
 ﻿@page "/Tecnico/Create"
-@inject TecnicoServices tecnicoServices
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<EditForm Model="Tecnico" OnValidSubmit="Guardar">
+<EditForm Model="tecnico" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
-        <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Registro de Técnicos</h3>
+    <div class="card shadow-lg border-0" style="background-color white">
+
+        <div class="card-header bg-primary text-center text-white py-2 rounded">
+            <h3 style="font-weight: bold;" class="font-weight-bold">Registro de T&eacute;cnicos</h3>
         </div>
 
         <div class="card-body">
-            @* TecnicoId *@
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label for="TecnicoId" class="form-label">TecnicoId:</label>
-                    <div class="input-group">
-                        <div style="width: 40%; height: 1em;">
-                            <InputNumber @bind-Value="Tecnico.TecnicoId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            @* Descripcion *@
             <div class="mb-3">
-                <label for="Descripcion" class="form-label">Descripci&oacuten:</label>
-                <InputText @bind-Value="Tecnico.Descripcion" class="form-control" />
-                <ValidationMessage For="@(() => Tecnico.Descripcion)" />
+                <label for="TecnicoId" class="form-label">T&eacute;cnicoId:</label>
+                <InputNumber @bind-Value="tecnico.TecnicoID" class="form-control" />
             </div>
 
-            @* DiasCompromiso *@
             <div class="mb-3">
-                <label for="DiasCompromiso" class="form-label">D&iacuteas Compromiso:</label>
-                <InputNumber @bind-Value="Tecnico.DiasCompromiso" class="form-control" />
-                <ValidationMessage For="@(() => Tecnico.DiasCompromiso)" />
+                <label for="Nombres" class="form-label">Nombres:</label>
+                <InputText @bind-Value="tecnico.Nombres" class="form-control" />
+                <ValidationMessage For="@(() => tecnico.Nombres)" />
             </div>
 
+            <div class="mb-3">
+                <label for="SueldoHora" class="form-label">SueldoHora:</label>
+                <InputNumber @bind-Value="tecnico.SueldoHora" class="form-control" />
+                <ValidationMessage For="@(() => tecnico.SueldoHora)" />
+            </div>
         </div>
 
-        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+        <div class="card-footer d-flex justify-content-lg-center text-center">
             <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                <a type="button" href="/Tecnico/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
+                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo"><span class="bi bi-plus"></span>Nuevo</button>
+                <button type="submit" class="btn btn-outline-success"><span class="bi bi-check2-square"></span>Guardar</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-90deg-left"></span>Volver</button>
+
             </div>
+
         </div>
+
     </div>
+
 </EditForm>
-
-
 @code {
     [Parameter]
+    public Tecnico tecnico { get; set; } = new Tecnico();
     public int TecnicoId { get; set; }
+    private bool existe = false;
 
-    public Tecnico Tecnico { get; set; } = new Tecnico();
-    private bool Existe = false;
-
-    public void Nuevo()
+    public async Task Nuevo()
     {
-        Tecnico = new Tecnico();
-        Existe = false;
+        tecnico = new Tecnico();
+        existe = false;
     }
 
     public async Task Buscar()
     {
-        Existe = false;
-        var tecnicoEncontrado = await TecnicoService.Buscar(Tecnico.TecnicoId);
-
-        if (tecnicoEncontrado != null)
+        existe = false;
+        var encontrado = await tecnicoService.Buscar(tecnico.TecnicoID);
+        if (encontrado != null)
         {
-            Tecnico = tecnicoEncontrado;
+            tecnico = encontrado;
         }
         else
         {
             Nuevo();
         }
     }
-
     public async Task<bool> Validar()
     {
-        Existe = await TecnicoService.Existe(Tecnico.Descripcion);
-        return !Existe;
+        existe = await tecnicoService.Existe(tecnico.TecnicoID, tecnico.Nombres);
+        return !existe;
     }
-
     public async Task Guardar()
     {
         if (!await Validar())
         {
             return;
         }
-
-        var guardo = await TecnicoService.Guardar(Tecnico);
-        if (guardo)
+        var guardado = await tecnicoService.Guardar(tecnico);
+        if (guardado)
         {
             Nuevo();
         }
     }
-
-    public async Task Eliminar()
+    public async Task Volver()
     {
-        var eliminado = await TecnicoService.Eliminar(Tecnico.TecnicoId);
-        Nuevo();
+        navigationManager.NavigateTo("/Tecnico/Index");
     }
 }

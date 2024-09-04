@@ -1,117 +1,81 @@
-﻿@page "/Prioridad/Edit/{PrioridadId:int}"
-@inject PrioridadService PrioridadService
-@inject NavigationManager NavigationManager
+﻿@page "/Tecnico/Edit/{TecnicoId:int}"
+@inject TecnicoService tecnicoService
 @rendermode InteractiveServer
+@inject NavigationManager NavigationManager
 
-<EditForm Model="Prioridad" OnValidSubmit="Guardar">
+@*Validacio al guardar*@
+<EditForm Model="Tecnico" OnValidSubmit="Modificar">
     <DataAnnotationsValidator />
-    <div class="card shadow-lg border-0 rounded" style="background-color: #f8f9fa;">
-        <div class="card-header bg-primary text-white" style="text-align: center;">
-            <h3> <i class="fas fa-clipboard-list"></i> Editar Prioridades</h3>
+    <div class="card">
+        <div class="card-header bg-warning text-center">
+            <h1>Editar T&eacute;cnico</h1>
         </div>
-
         <div class="card-body">
             <div class="row">
-
-                <div class="col-md-6 mb-3">
-                    <label for="PrioridadId" class="form-label">PrioridadId:</label>
+                <div class="col-md-4">
+                    <label>ID:</label>
                     <div class="input-group">
-                        <div style="width: 40%; height: 1em;">
-                            <InputNumber @bind-Value="Prioridad.PrioridadId" class="form-control" style="font-size: 0.8em;" aria-describedby="BotonBuscar" />
-                        </div>
+                        <InputNumber min="0" @bind-Value="Tecnico.TecnicoID" class="form-control" READONLY></InputNumber>
                     </div>
                 </div>
             </div>
-
-            <div class="mb-3">
-                <label for="Descripcion" class="form-label">Descripción:</label>
-                <InputText @bind-Value="Prioridad.Descripcion" class="form-control" />
-                <ValidationMessage For="@(() => Prioridad.Descripcion)" />
+            <div class="row">
+                <div class="col-md">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="Tecnico.Nombres" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => Tecnico.Nombres)" />
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label for="DiasCompromiso" class="form-label">Días Compromiso:</label>
-                <InputNumber @bind-Value="Prioridad.DiasCompromiso" class="form-control" />
-                <ValidationMessage For="@(() => Prioridad.DiasCompromiso)" />
+            <div class="row">
+                <div class="col-md">
+                    <label>Sueldo Hora:</label>
+                    <InputNumber @bind-Value="Tecnico.SueldoHora" class="form-control"></InputNumber>
+                    <ValidationMessage For="@(() => Tecnico.SueldoHora)" />
+                </div>
             </div>
-
+            </div>
+            <br />
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-success">Modificar <i class="bi bi-floppy-fill" /></button>
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+            </div>
         </div>
-
-        <div class="card-footer bg-light d-flex justify-content-center mt-3">
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span> Nuevo </button>
-                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
-                <a type="button" href="/Prioridad/Index/" class="btn btn-outline-danger"><span class="bi bi-arrow-bar-left"></span> Retroceder </a>
-            </div>
-        </div>
-    </div>
+    <Toasts class="p-5" Messages="Mensaje" Placement="ToastsPlacement.TopRight" />
 </EditForm>
-
 
 @code {
     [Parameter]
-    public int? PrioridadId { get; set; }
-    public Prioridades Prioridad { get; set; } = new Prioridades();
-    private bool Existe = false;
+    public int TecnicoID { get; set; }
+    public Tecnico Tecnico { get; set; } = new Tecnico();
 
     protected override async Task OnInitializedAsync()
     {
-        if (PrioridadId.HasValue)
-        {
-            // si recibimos un {PrioridadId:int} por parametro asignarlo
-            // y luego buscarla para que se vea en pantalla
-            Prioridad.PrioridadId = PrioridadId.Value;
-            await Buscar();
-        }
+        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoID);
     }
-
-    public void Nuevo()
-    {
-        Prioridad = new Prioridades();
-        Existe = false;
-    }
-
-    public async Task Buscar()
-    {
-        var prioridadEncontrada = await PrioridadService.Buscar(Prioridad.PrioridadId);
-
-        if (prioridadEncontrada != null)
-        {
-            Prioridad = prioridadEncontrada;
-        }
-        // else
-        // {
-        //     notificationService.ShowNotification(
-        //     titulo: "Error de Busqueda",
-        //     mensaje: "Registro no encontrado",
-        //     NotificationSeverity.Error);
-        // }
-    }
-
+ 
     public async Task<bool> Validar()
     {
-        //TODO: Cambiar por Any y llevarlo al servicio.
-        Existe = await PrioridadService.Existe(Prioridad.PrioridadId, Prioridad.Descripcion);
-        return !Existe;
+        var HayTecnico = await tecnicoService.Existe(Tecnico.TecnicoID, Tecnico.Nombres);
+        return !HayTecnico;
     }
-
-    public async Task Guardar()
+    public async Task Modificar()
     {
         if (!await Validar())
         {
             return;
         }
-
-        var guardo = await PrioridadService.Guardar(Prioridad);
+        var guardo = await tecnicoService.Guardar(Tecnico);
         if (guardo)
         {
-            Nuevo();
+        
+            await Volver();
         }
+            
     }
-
-    public async Task Eliminar()
+    public Task Volver()
     {
-        var eliminado = await PrioridadService.Eliminar(Prioridad.PrioridadId);
-        Nuevo();
+        NavigationManager.NavigateTo("/Tecnico/Index");
+        return Task.CompletedTask;
     }
 }
+   
