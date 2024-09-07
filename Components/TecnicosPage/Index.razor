@@ -14,12 +14,13 @@
     <table class="table table-bordered text-center">
         <thead class="bg-primary text-white">
             <tr>
-                <th class="text-white">T&eacute;cnicoId</th>
-                <th class="text-white">Nombres</th>
-                <th class="text-white">SueldoHora</th>
-                <th class="text-white">Ver</th>
-                <th class="text-white">Editar</th>
-                <th class="text-white">Eliminar</th>
+                <th class="Text-black">T&eacute;cnicoId</th>
+                <th class="Text-black">Nombre</th>
+                <th class="text-black">TipoTecnico</th>
+                <th class="text-black">SueldoHora</th>
+                <th class="text-black">Ver</th>
+                <th class="text-black">Editar</th>
+                <th class="text-black">Eliminar</th>
             </tr>
         </thead>
         <tbody>
@@ -28,18 +29,23 @@
                 <tr>
                     <td>@tecnicos.TecnicoID</td>
                     <td>@tecnicos.Nombres</td>
+                    <td>@tecnicos.Tipostecnicos!.Descripcion</td>
                     <td>@tecnicos.SueldoHora</td>
-
+               
                     <td>
-                        <a href="/Tecnico/Details/@tecnicos.TecnicoID" class="btn btn-outline-primary"><span class="bi bi-eye"></span></a>
+                        <a href="/Tecnico/Details/@tecnicos.TecnicoID" style="border: none; background-color: transparent;" class="btn-detalle">
+                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
                     </td>
-
                     <td>
-                        <a href="/Tecnico/Edit/@tecnicos.TecnicoID" class="btn btn-outline-secondary" style="color: #FF7043; border-color: #FF7043;" onmouseover="this.style.backgroundColor='#FF7043'; this.style.color='#FFFFFF';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FF7043';"><span class="bi bi-pencil"></span></a>
+                        <a href="/Tecnico/Edit/@tecnicos.TecnicoID" style="border: none; background-color: transparent;" class="btn-editar">
+                            <span class="bi bi-pencil-square" style="font-size: 2rem;"></span>
+                        </a>
                     </td>
-
                     <td>
-                        <a href="/Tecnico/Delete/@tecnicos.TecnicoID" class="btn btn-outline-danger"><span class="bi bi-trash"></span></a>
+                        <a href="/Tecnico/Delete/@tecnicos.TecnicoID" style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
                     </td>
                 </tr>
             }
@@ -52,8 +58,9 @@
 
 </EditForm>
 @code {
-    public Tecnico tecnicos = new Tecnico();
-    public List<Tecnico> ListaTecnicos = new List<Tecnico>();
+    public Tecnicos tecnicos = new Tecnicos();
+    public List<Tecnicos> ListaTecnicos = new List<Tecnicos>();
+
 
     protected override async Task OnInitializedAsync()
     {

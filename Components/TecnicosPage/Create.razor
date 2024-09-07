@@ -45,13 +45,13 @@
 </EditForm>
 @code {
     [Parameter]
-    public Tecnico tecnico { get; set; } = new Tecnico();
+    public Tecnicos tecnico { get; set; } = new Tecnicos();
     public int TecnicoId { get; set; }
     private bool existe = false;
 
     public async Task Nuevo()
     {
-        tecnico = new Tecnico();
+        tecnico = new Tecnicos();
         existe = false;
     }
 
@@ -70,7 +70,7 @@
     }
     public async Task<bool> Validar()
     {
-        existe = await tecnicoService.Existe(tecnico.TecnicoID, tecnico.Nombres);
+        existe = await tecnicoService.Existe(tecnico.TecnicoID);
         return !existe;
     }
     public async Task Guardar()

@@ -25,12 +25,12 @@
         <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
     </div>
 </div>
-<Toasts class="p-5" Messages="Mensaje" Placement="ToastsPlacement.TopRight" />
+
 
 @code {
     [Parameter]
     public int TecnicoID { get; set; }
-    public Tecnico? Tecnico { get; set; } = new Tecnico();
+    public Tecnicos? Tecnico { get; set; } = new Tecnicos();
     
 
     protected override async Task OnInitializedAsync()

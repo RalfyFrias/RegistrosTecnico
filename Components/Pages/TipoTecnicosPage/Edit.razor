@@ -1,0 +1,116 @@
+﻿@page "/TipoTecnico/Edit/{TipoId:int}"
+@inject TiposTecnicosService tiposTecnicosService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="tipostecnicos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3> <i class="fas fa-clipboard-list"></i> Modificar Tipo de Técnico</h3>
+        </div>
+
+        <div class="card-body">
+            <!-- TipoId -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="TipoId" class="form-label">TipoId:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="tipostecnicos.TipoId" class="form-control" style="font-size: 0.8em;" />
+                        </div>
+                        <ValidationMessage For="@(() => tipostecnicos.TipoId)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descripcion -->
+            <div class="mb-3">
+                <label for="Descripcion" class="form-label">Descripción:</label>
+                <InputText @bind-Value="tipostecnicos.Descripcion" class="form-control" />
+                <ValidationMessage For="@(() => tipostecnicos.Descripcion)" />
+                @if (Existe)
+                {
+                    <p class="text-danger">Ya existe un tipo técnico con esta descripción.</p>
+                }
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><span class="bi bi-trash-fill"></span> Eliminar </button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Retroceder"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TipoId { get; set; }
+    public Tipostecnicos? tipostecnicos { get; set; } = new Tipostecnicos();
+    private bool Existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TipoId != 0)
+        {
+            await Buscar();
+        }
+    }
+
+    public async Task Nuevo()
+    {
+        tipostecnicos = new Tipostecnicos();
+        Existe = false;
+    }
+
+    public async Task Buscar()
+    {
+        Existe = false;
+        var tipostecnicosEncontrado = await tiposTecnicosService.Buscar(TipoId);
+
+        if (tipostecnicosEncontrado != null)
+        {
+            tipostecnicos = tipostecnicosEncontrado;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+        }
+
+        var guardado = await tiposTecnicosService.Guardar(tipostecnicos); 
+        if (guardado)
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        var eliminado = await tiposTecnicosService.Eliminar(tipostecnicos.TipoId);
+        Nuevo();
+    }
+
+    private async Task Retroceder()
+    {
+        navigationManager.NavigateTo("/TipoTecnicos/index");
+    }
+
+    public async Task<bool> Validar()
+    {
+        var listaTipos = await tiposTecnicosService.Listar(t => t.Descripcion.ToLower() == tipostecnicos.Descripcion.ToLower() && t.TipoId != tipostecnicos.TipoId);
+        Existe = listaTipos.Any();
+        return Existe;
+    }
+}

@@ -3,11 +3,10 @@
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 
-@*Validacio al guardar*@
 <EditForm Model="Tecnico" OnValidSubmit="Modificar">
     <DataAnnotationsValidator />
     <div class="card">
-        <div class="card-header bg-warning text-center">
+        <div class="card-header bg-primary text-center">
             <h1>Editar T&eacute;cnico</h1>
         </div>
         <div class="card-body">
@@ -15,7 +14,7 @@
                 <div class="col-md-4">
                     <label>ID:</label>
                     <div class="input-group">
-                        <InputNumber min="0" @bind-Value="Tecnico.TecnicoID" class="form-control" READONLY></InputNumber>
+                        <InputNumber min="0" @bind-Value="Tecnico.TecnicoID" class="form-control" readonly></InputNumber>
                     </div>
                 </div>
             </div>
@@ -33,31 +32,51 @@
                     <ValidationMessage For="@(() => Tecnico.SueldoHora)" />
                 </div>
             </div>
-            </div>
-            <br />
-            <div class="card-footer text-center">
-                <button type="submit" class="btn btn-success">Modificar <i class="bi bi-floppy-fill" /></button>
-                <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
-            </div>
         </div>
-    <Toasts class="p-5" Messages="Mensaje" Placement="ToastsPlacement.TopRight" />
+        <br />
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-success">Modificar <i class="bi bi-floppy-fill" /></button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+        </div>
+    </div>
 </EditForm>
 
 @code {
     [Parameter]
     public int TecnicoID { get; set; }
-    public Tecnico Tecnico { get; set; } = new Tecnico();
+    public Tecnicos? Tecnico { get; set; } = new Tecnicos();
+    private bool Existe = false;
 
     protected override async Task OnInitializedAsync()
     {
-        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoID);
+        // Buscar el técnico usando el parámetro TecnicoID y asignarlo
+        var tecnicoBuscado = await tecnicoService.Buscar(TecnicoID);
+        if (tecnicoBuscado != null)
+        {
+            Tecnico = tecnicoBuscado;
+        }
     }
- 
+
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+        }
+
+        var guardo = await tecnicoService.Guardar(Tecnico);
+        if (guardo)
+        {
+
+        }
+    }
+
     public async Task<bool> Validar()
     {
-        var HayTecnico = await tecnicoService.Existe(Tecnico.TecnicoID, Tecnico.Nombres);
-        return !HayTecnico;
+        var Tecnicos = await tecnicoService.Listar(t => t.Nombres.ToLower() == Tecnico.Nombres.ToLower() && Tecnico.TecnicoID != TecnicoID);
+        return Tecnicos.Count == 0;
     }
+
     public async Task Modificar()
     {
         if (!await Validar())
@@ -67,15 +86,13 @@
         var guardo = await tecnicoService.Guardar(Tecnico);
         if (guardo)
         {
-        
             await Volver();
         }
-            
     }
+
     public Task Volver()
     {
         NavigationManager.NavigateTo("/Tecnico/Index");
         return Task.CompletedTask;
     }
 }
-   
