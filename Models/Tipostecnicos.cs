@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RegistroTecnicos.Models
-{
-    public class Tipostecnicos
+namespace RegistroTecnicos.Models;
+
+public class Tipostecnicos
     {
         [Key]
 
@@ -12,4 +13,4 @@ namespace RegistroTecnicos.Models
         public Tecnicos? Tecnicos { get; set; }
 
     }
-}
+

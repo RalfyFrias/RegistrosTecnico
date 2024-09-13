@@ -11,13 +11,13 @@
         <h5 class="card-title">¡Desea eliminar el T&eacute;cnico!</h5>
         <dl class="row">
             <dt class="col-sm-3">ID:</dt>
-            <dd class="col-sm-9">@Tecnico!.TecnicoID</dd>
+            <dd class="col-sm-9">@Tecnico.TecnicoId</dd>
 
             <dt class="col-sm-3">Nombre:</dt>
-            <dd class="col-sm-9">@Tecnico.Nombres</dd>
+            <dd class="col-sm-9">@Tecnico.Nombre</dd>
 
             <dt class="col-sm-3">Sueldo Hora:</dt>
-            <dd class="col-sm-9">@Tecnico.SueldoHora</dd>
+            <dd class="col-sm-9">@Tecnico.Sueldohora</dd>
         </dl>
     </div>
     <div class="card-footer text-lg-center">
@@ -25,7 +25,6 @@
         <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
     </div>
 </div>
-
 
 @code {
     [Parameter]
@@ -35,8 +34,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Tecnico!.TecnicoID = TecnicoID;
-        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoID);
+        Tecnico!.TecnicoId = TecnicoID;
+        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoId);
     }
    
     public async Task Eliminar()

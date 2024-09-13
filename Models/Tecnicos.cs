@@ -1,18 +1,26 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
-namespace RegistroTecnicos.Models
+namespace RegistroTecnicos.Models;
+
+public class Tecnicos
 {
-    public class Tecnicos
-    {
-        [Key]
-       public int TecnicoID { get; set;}
-        [Required(ErrorMessage = " El Campo Descripci&oacute;n es obligatorio")]
-        public string? Nombres { get; set; }
-       public decimal SueldoHora { get; set; }
+    [Key]
 
-        [ForeignKey("Tipostecnicos")]
-        public int TipoId { get; set; }
-        public Tipostecnicos? Tipostecnicos { get; set; }
-    }
+    public int TecnicoId { get; set; }
+
+    [Required(ErrorMessage = "El Campo Descripción es obligatorio ")]
+    public string? Nombre { get; set; }
+
+    [Required(ErrorMessage = "El Campo Descripción es obligatorio")]
+    public float? Sueldohora { get; set; }
+
+    [ForeignKey("TipoId")]
+    public int TipoId { get; set; }
+
+    public int IncentivoId { get; set; }
+
+    public Tipostecnicos? Tipotecnicos { get; set; }
+
+    public string Descripcion { get; set; }
 }
