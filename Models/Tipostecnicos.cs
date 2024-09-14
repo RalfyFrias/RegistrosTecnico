@@ -10,7 +10,7 @@ public class Tipostecnicos
         public int TipoId { get; set; }
         [Required(ErrorMessage = "El campo no esta lleno")]
         public string? Descripcion { get; set; }
-        public Tecnicos? Tecnicos { get; set; }
+    public ICollection<Tecnicos>? Tecnicos { get; set; }
 
-    }
+}
 
