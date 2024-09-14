@@ -1,0 +1,98 @@
+﻿@page "/Cliente/Edit/{ClienteId:int}"
+@inject ClienteService clienteService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="clientes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0" style="background-color: white">
+
+        <div class="card-header bg-primary text-center text-white py-2 rounded">
+            <h3 style="font-weight: bold;" class="font-weight-bold"> Editar Cliente </h3>
+        </div>
+
+        <div class="card-body">
+            <div class="col-md-10 mb-3">
+                <label for="ClienteId" class="form-label">ClienteId:</label>
+                <InputNumber @bind-Value="clientes.ClienteId" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Nombres" class="form-label">Nombres:</label>
+                <InputText @bind-Value="clientes.Nombres" class="form-control" />
+                <ValidationMessage For="@(() => clientes.Nombres)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="WhatsApp" class="form-label">WhatsApp:</label>
+                <InputText @bind-Value="clientes.WhatsApp" class="form-control" />
+                <ValidationMessage For="@(() => clientes.WhatsApp)" />
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-lg-center text-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">
+                    <span class="bi bi-plus"></span> Nuevo
+                </button>
+                <button type="submit" class="btn btn-outline-success">
+                    <span class="bi bi-check2-square"></span> Guardar
+                </button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Volver">
+                    <span class="bi bi-arrow-90deg-left"></span> Volver
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes? clientes { get; set; } = new Clientes();
+    public List<Clientes> listaClientes { get; set; } = new List<Clientes>();
+    private bool existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        listaClientes = await clienteService.Listar(t => true);
+
+        // Buscar el cliente si ya existe para editar
+        if (ClienteId != 0)
+        {
+            clientes = listaClientes.FirstOrDefault(c => c.ClienteId == ClienteId) ?? new Clientes();
+        }
+    }
+
+    public async Task Nuevo()
+    {
+        clientes = new Clientes();
+    }
+
+    public async Task<bool> Validar()
+    {
+        var listaClientesExistentes = await clienteService.Listar(t => t.Nombres.ToLower() == clientes.Nombres.ToLower() && t.ClienteId != clientes.ClienteId);
+        existe = listaClientesExistentes.Any();
+        return !existe;
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            // Si ya existe un cliente con el mismo nombre, no se permite guardar
+            return;
+        }
+
+        var guardado = await clienteService.Guardar(clientes);
+        if (guardado)
+        {
+            Nuevo(); // Limpiar el formulario después de guardar
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Cliente/Index");
+    }
+}
