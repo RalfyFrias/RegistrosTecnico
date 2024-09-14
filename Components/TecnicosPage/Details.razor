@@ -1,43 +1,62 @@
-﻿@page "/Tecnico/Details/{TecnicoId:int}"
+﻿@page "/Tecnico/Details"
+@page "/Tecnico/Details/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
-@inject TiposTecnicosService tiposTecnicosService
-@inject NavigationManager navigationManager;
+@inject TiposTecnicosService tipotecnicoService
+@inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<div class="card">
-    <div class="card-header bg-red">
-        <h2>Detalles del T&eacute;cnico </h2>
-    </div>
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-3">ID:</dt>
-            <dd class="col-sm-9">@Tecnico.TecnicoId</dd>
+<PageTitle>Detalles del técnico</PageTitle>
 
-            <dt class="col-sm-3">Nombre:</dt>
-            <dd class="col-sm-9">@Tecnico.Nombre</dd>
-
-            <dt class="col-sm-3">Sueldo Hora:</dt>
-            <dd class="col-sm-9">@Tecnico.Sueldohora</dd>
-
-        </dl>
+@if (tecnico != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header  bg-primary text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Detalles del técnico</strong></h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>TécnicoId:</strong> @tecnico.TecnicoId</li>
+                                <li><strong>Nombre:</strong> @tecnico.Nombre</li>
+                                <li><strong>Tipo T&eacute;cnico</strong> @tipoDescripcion</li>
+                                <li><strong>SueldoHora:</strong> @tecnico.Sueldohora</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+            </div>
+        </div>
     </div>
-    <div class="card-footer text-lg-center">
-        <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
-    </div>
-</div>
+}
+else
+{
+    <p>Técnico no encontrado.</p>
+}
+
 @code {
     [Parameter]
-    public int TecnicoID { get; set; }
-    public Tecnicos? Tecnico { get; set; } = new Tecnicos();
-    public string Notification { get; set; } = string.Empty;
+    public int TecnicoId { get; set; }
+    public Tecnicos? tecnico { get; set; }
+    public string tipoDescripcion { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        Tecnico.TecnicoId = TecnicoID;
-        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoId);
+        tecnico = await tecnicoService.Buscar(TecnicoId);
+        if (tecnico != null)
+        {
+            var tipo = await tipotecnicoService.Buscar(TecnicoId);
+            tipoDescripcion = tipo?.Descripcion ?? "Tipo no encontrado";
+        }
     }
+
     public void Volver()
     {
-        navigationManager.NavigateTo("/Tecnico/Index");
+        navigationManager.NavigateTo("/Tecnico/index");
     }
 }

@@ -64,7 +64,7 @@
 @code {
     [Parameter]
     public int TecnicoId { get; set; }
-    public Tecnicos? tecnico { get; set; } = new Tecnicos(); // Corregido a Tecnico
+    public Tecnicos? tecnico { get; set; } = new Tecnicos(); 
     public List<Tipostecnicos> listaTiposTecnicos { get; set; } = new List<Tipostecnicos>();
 
     protected override async Task OnInitializedAsync()

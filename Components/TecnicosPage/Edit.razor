@@ -1,7 +1,6 @@
 ﻿@page "/Tecnico/Edit"
 @page "/Tecnico/Edit/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
-@inject TiposTecnicosService tiposTecnicosService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -10,7 +9,7 @@
     <div class="card shadow-lg border-0" style="background-color: white">
 
         <div class="card-header bg-primary text-center text-white py-2 rounded">
-            <h3 style="font-weight: bold;" class="font-weight-bold">Registro de T&eacute;cnicos</h3>
+            <h3 style="font-weight: bold;" class="font-weight-bold">Editar T&eacute;cnico</h3>
         </div>
 
         <div class="card-body">
@@ -20,7 +19,17 @@
                 <ValidationMessage For="@(() => tecnico.TecnicoId)" />
             </div>
 
-        
+            <div class="mb-3">
+                <label for="TipoId" class="form-label">Tipo Técnico:</label>
+                <InputSelect @bind-Value="tecnico.TipoId" class="form-control">
+                    <option value="0">Elija un tipo t&eacute;cnico</option>
+                    @foreach (var tipo in listaTiposTecnicos)
+                    {
+                        <option value="@tipo.TipoId ">@tipo.Descripcion</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => tecnico.TecnicoId)" />
+            </div>
 
             <div class="mb-3">
                 <label for="Nombres" class="form-label">Nombre:</label>
@@ -55,7 +64,7 @@
     [Parameter]
     public int TecnicoId { get; set; }
     public Tecnicos? tecnico { get; set; } = new Tecnicos();
-   
+    public List<Tipostecnicos> listaTiposTecnicos { get; set; } = new List<Tipostecnicos>();
     private bool Existe = false;
 
     protected override async Task OnInitializedAsync()
@@ -63,7 +72,7 @@
       
         if (TecnicoId != 0)
         {
-            tecnico=await tecnicoService.Buscar(TecnicoId);
+            tecnico = await tecnicoService.Buscar(TecnicoId);
           
         }
     }

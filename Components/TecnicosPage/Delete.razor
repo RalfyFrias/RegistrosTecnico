@@ -1,51 +1,54 @@
 ﻿@page "/Tecnico/Delete/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
+@inject TiposTecnicosService tipotecnicoService
 @inject NavigationManager navigationManager;
 @rendermode InteractiveServer
 
-<div class="card">
-    <div class="card-header bg-warning">
-        <h1>Eliminar T&eacute;cnico</h1>
+<div class="card shadow-lg">
+    <div class="card-header bg-primary text-white text-center py-2">
+        <h3><i class="bi bi-exclamation-triangle-fill"></i> Eliminar Técnico</h3>
     </div>
-    <div class="card-body">
-        <h5 class="card-title">¡Desea eliminar el T&eacute;cnico!</h5>
-        <dl class="row">
-            <dt class="col-sm-3">ID:</dt>
-            <dd class="col-sm-9">@Tecnico.TecnicoId</dd>
-
-            <dt class="col-sm-3">Nombre:</dt>
-            <dd class="col-sm-9">@Tecnico.Nombre</dd>
-
-            <dt class="col-sm-3">Sueldo Hora:</dt>
-            <dd class="col-sm-9">@Tecnico.Sueldohora</dd>
-        </dl>
+    <div class="card-body text-center">
+        <p class="text-white fw-bold mb-3">¿Está seguro de que desea eliminar el técnico?</p>
+        <p><strong>ID:</strong> @Tecnico.TecnicoId</p>
+        <p><strong>Nombre:</strong> @Tecnico.Nombre</p>
+        <p><strong>Tipo Técnico:</strong> @tipoDescripcion</p>
+        <p><strong>Sueldo por Hora:</strong> @Tecnico.Sueldohora</p>
     </div>
-    <div class="card-footer text-lg-center">
-        <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="bi bi-trash3" /></button>
-        <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+    <div class="card-footer text-center">
+        <button type="button" class="btn btn-danger mx-1" @onclick="Eliminar">
+            <i class="bi bi-trash3"></i> Eliminar
+        </button>
+        <button type="button" class="btn btn-outline-primary mx-1" @onclick="Volver">
+            <i class="bi bi-arrow-return-left"></i> Volver
+        </button>
     </div>
 </div>
 
 @code {
     [Parameter]
-    public int TecnicoID { get; set; }
+    public int TecnicoId { get; set; }
     public Tecnicos? Tecnico { get; set; } = new Tecnicos();
+    public string tipoDescripcion { get; set; } = string.Empty;
     
-
     protected override async Task OnInitializedAsync()
     {
-        Tecnico!.TecnicoId = TecnicoID;
-        Tecnico = await tecnicoService.Buscar(Tecnico.TecnicoId);
+        Tecnico = await tecnicoService.Buscar(TecnicoId);
+        if (Tecnico != null)
+        {
+            var tipo = await tipotecnicoService.Buscar(TecnicoId);
+            tipoDescripcion = tipo?.Descripcion ?? "Tipo no encontrado";
+        }
     }
    
     public async Task Eliminar()
     {
-        if (TecnicoID == 0 || Tecnico == null)
+        if (TecnicoId == 0 || Tecnico == null)
         {
             return;
         }
 
-        if (await tecnicoService.Eliminar(TecnicoID))
+        if (await tecnicoService.Eliminar(TecnicoId))
         {
             Volver();
         }

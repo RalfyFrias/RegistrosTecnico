@@ -1,5 +1,6 @@
 ﻿@page "/Tecnico/Index"
 @inject TecnicoService tecnicoService
+@inject TiposTecnicosService tipotecnicoService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -28,20 +29,25 @@
             {
                 <tr>
                     <td>@tecnicos.TecnicoId</td>
-                    <td>@tecnicos?.Tipotecnicos</td>
                     <td>@tecnicos.Nombre</td>
+                    <!-- Mostrar la Descripción del Tipo de Técnico -->
+                    <td>@(tipostecnicos.FirstOrDefault(t => t.TipoId == tecnicos.TipoId)?.Descripcion ?? "No disponible")</td>
                     <td>@tecnicos.Sueldohora</td>
 
                     <td>
-                        <a href="/Tecnico/Details/@tecnicos.TecnicoId" class="btn btn-outline-primary"><span class="bi bi-eye"></span></a>
+                        <a href="/Tecnico/Details/@tecnicos.TipoId" style="border: none; background-color: transparent;" class="btn-detalle">
+                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
                     </td>
-
                     <td>
-                        <a href="/Tecnico/Edit/@tecnicos.TecnicoId" class="btn btn-outline-secondary" style="color: #FF7043; border-color: #FF7043;" onmouseover="this.style.backgroundColor='#FF7043'; this.style.color='#FFFFFF';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FF7043';"><span class="bi bi-pencil"></span></a>
+                        <a href="/Tecnico/Edit/@tecnicos.TipoId" style="border: none; background-color: transparent;" class="btn-editar">
+                            <span class="bi bi-pencil-square" style="font-size: 2rem;"></span>
+                        </a>
                     </td>
-
                     <td>
-                        <a href="/Tecnico/Delete/@tecnicos.TecnicoId" class="btn btn-outline-danger"><span class="bi bi-trash"></span></a>
+                        <a href="/Tecnico/Delete/@tecnicos.TipoId" style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
                     </td>
                 </tr>
             }
@@ -56,9 +62,11 @@
 @code {
     public Tecnicos tecnicos = new Tecnicos();
     public List<Tecnicos> ListaTecnicos = new List<Tecnicos>();
+    public List<Tipostecnicos> tipostecnicos = new List<Tipostecnicos>();
 
     protected override async Task OnInitializedAsync()
     {
         ListaTecnicos = await tecnicoService.Listar(t => true);
+        tipostecnicos  = await tipotecnicoService.Listar(t => true);
     }
 }
