@@ -1,0 +1,130 @@
+﻿@page "/Trabajo/Edit"
+@page "/Trabajo/Edit/{TrabajoId:int}"
+@inject TrabajoService trabajoService
+@inject ClienteService clienteService
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="trabajos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0" style="background-color: white">
+
+        <div class="card-header bg-primary text-center text-white py-2 rounded">
+            <h3 style="font-weight: bold;" class="font-weight-bold">Editar Trabajos</h3>
+        </div>
+
+        <div class="card-body">
+            <div class="col-md-10 mb-3">
+                <label for="TrabajoId" class="form-label">TrabajoId:</label>
+                <InputNumber @bind-Value="trabajos.TrabajoId" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Fecha" class="form-label">Fecha:</label>
+                <InputDate @bind-Value="trabajos.Fecha" class="form-control" />
+                <ValidationMessage For="@(() => trabajos.Fecha)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="ClienteId" class="form-label">ClienteId:</label>
+                <InputSelect @bind-Value="trabajos.ClienteId" class="form-control">
+                    <option value="0">Elija un cliente</option>
+                    @foreach (var cliente in ListaClientes)
+                    {
+                        <option value="@cliente.ClienteId">@cliente.Nombres</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => trabajos.ClienteId)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="TecnicoId" class="form-label">T&eacute;cnicoId:</label>
+                <InputSelect @bind-Value="trabajos.TecnicoId" class="form-control">
+                    <option value="0">Elija un T&eacute;cnico</option>
+                    @foreach (var tecnico in ListaTecnicos)
+                    {
+                        <option value="@tecnico.TecnicoId">@tecnico.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => trabajos.TecnicoId)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Descripcion" class="form-label">Descripci&oacute;n</label>
+                <InputText @bind-Value="trabajos.Descripcion" class="form-control" />
+                <ValidationMessage For="@(() => trabajos.Descripcion)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Monto" class="form-label">Monto:</label>
+                <InputNumber @bind-Value="trabajos.Monto" class="form-control" />
+                <ValidationMessage For="@(() => trabajos.Monto)" />
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-lg-center text-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">
+                    <span class="bi bi-plus"></span> Nuevo
+                </button>
+                <button type="submit" class="btn btn-outline-success">
+                    <span class="bi bi-check2-square"></span> Guardar
+                </button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Volver">
+                    <span class="bi bi-arrow-90deg-left"></span> Volver
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TrabajoId { get; set; }
+    public Trabajos? trabajos { get; set; } = new Trabajos();
+    public List<Clientes> ListaClientes = new List<Clientes>();
+    public List<Tecnicos> ListaTecnicos = new List<Tecnicos>();
+    public List<Trabajos> listaTrabajos { get; set; } = new List<Trabajos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaClientes = await clienteService.Listar(c => true);
+        ListaTecnicos = await tecnicoService.Listar(t => true);
+
+        if (TrabajoId != 0)
+        {
+            trabajos = await trabajoService.Buscar(TrabajoId);
+        }
+    }
+
+    public async Task Nuevo()
+    {
+        trabajos = new Trabajos();
+    }
+
+    public async Task<bool> Validar()
+    {
+        var existe = await trabajoService.Existe(trabajos.TrabajoId);
+        return !existe;
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            return;
+        }
+
+        var guardado = await trabajoService.Guardar(trabajos);
+        if (guardado)
+        {
+            Nuevo();
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Trabajo/Index");
+    }
+}

@@ -1,0 +1,74 @@
+﻿@page "/Trabajo/Details"
+@page "/Trabajo/Details/{TrabajoId:int}"
+@inject TecnicoService tecnicoService
+@inject ClienteService clienteService
+@inject TrabajoService trabajoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles del Trabajo</PageTitle>
+
+@if (trabajos != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header bg-primary text-white text-center py-2 rounded">
+                <h3 class="text-center"><strong>Detalles del técnico</strong></h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>TrabajoId:</strong> @trabajos.TrabajoId</li>
+                                <li><strong>Fecha:</strong> @trabajos.Fecha</li>
+                                <li><strong>ClienteId:</strong>@clientes.Nombres</li>
+                                <li><strong>T&eacute;cnicoId:</strong>@tecnicos.Nombre</li>
+                                <li><strong>Descripcion:</strong>@trabajos.Descripcion</li>
+                                <li><strong>Monto:</strong> @trabajos.Monto</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Técnico no encontrado.</p>
+}
+
+@code {
+    [Parameter]
+    public int TrabajoId { get; set; }
+
+    public Trabajos? trabajos { get; set; } = new Trabajos();
+    public Clientes? clientes { get; set; } = new Clientes();
+    public Tecnicos? tecnicos { get; set; } = new Tecnicos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TrabajoId != 0)
+        {
+            trabajos = await trabajoService.Buscar(TrabajoId);
+
+            if (trabajos?.ClienteId != 0)
+            {
+                clientes = await clienteService.Buscar(trabajos.ClienteId);
+            }
+            if (trabajos?.TecnicoId != 0)
+            {
+                tecnicos = await tecnicoService.Buscar(trabajos.TecnicoId);
+            }
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Trabajo/Index");
+    }
+}

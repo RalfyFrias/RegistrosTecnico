@@ -1,0 +1,73 @@
+﻿@page "/Trabajo/Index"
+@inject TrabajoService trabajoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="ListaTrabajos" class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-primary text-center text-white py-2 rounded">
+        <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de trabajos</h3>
+    </div>
+
+    <div class="col md-3 text-end">
+        <a href="/Trabajo/Create" class="btn btn-success"><Icon Name="IconName.Pencil" />Crear</a>
+    </div>
+
+    <table class="table table-bordered text-center">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th class="text-white">TrabajoId</th>
+                <th class="text-white">Fecha</th>
+                <th class="text-white">ClienteId</th>
+                <th class="text-white">T&eacute;cnicoId</th>
+                <th class="text-white">Descripci&oacute;on</th>
+                <th class="text-white">Monto</th>
+                <th class="text-white">Ver</th>
+                <th class="text-white">Editar</th>
+                <th class="text-white">Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var trabajos in ListaTrabajos)
+            {
+                <tr>
+                    <td>@trabajos.TrabajoId</td>
+                    <td>@trabajos.Fecha</td>
+                    <td>@trabajos.Clientes?.Nombres</td>
+                    <td>@trabajos.Tecnicos?.Nombre</td>
+                    <td>@trabajos.Descripcion</td>
+                    <td>@trabajos.Monto</td>
+
+                    <td>
+                        <a href="Trabajo/Details/@trabajos.ClienteId" class="btn-detalle">
+                            <span class="bi bi-info-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Trabajo/Edit/@trabajos.TrabajoId" class="btn-editar">
+                            <span class="bi bi-pencil-square" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Trabajo/Delete/@trabajos.TrabajoId" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="card-footer text-start">
+        <p>Total de Clientes: @ListaTrabajos.Count</p>
+    </div>
+</EditForm>
+
+@code {
+    public Trabajos trabajos = new Trabajos();
+    public List<Trabajos> ListaTrabajos = new List<Trabajos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTrabajos = await trabajoService.Listar(c => true);
+    }
+}

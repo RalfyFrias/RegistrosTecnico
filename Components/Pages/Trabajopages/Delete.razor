@@ -1,0 +1,70 @@
+﻿@page "/Trabajo/Delete/{TrabajoId:int}"
+@inject TecnicoService tecnicoService
+@inject TrabajoService trabajoService
+@inject ClienteService clienteService
+@inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
+<div class="card shadow-lg">
+    <div class="card-header bg-primary text-white text-center py-2">
+        <h3><i class="bi bi-exclamation-triangle-fill"></i> Eliminar Trabajo</h3>
+    </div>
+    <div class="card-body text-center">
+        <p class="text-white fw-bold mb-3">¿Está seguro de que desea eliminar el trabajo?</p>
+        <li><strong>TrabajoId:</strong> @trabajos.TrabajoId</li>
+        <li><strong>Fecha:</strong> @trabajos.Fecha</li>
+        <li><strong>Cliente:</strong> @clientes.Nombres</li>
+        <li><strong>T&eacute;cnico:</strong> @tecnicos.Nombre</li>
+        <li><strong>Descripcion:</strong> @trabajos.Descripcion</li>
+        <li><strong>Monto:</strong> @trabajos.Monto</li>
+    </div>
+    <div class="card-footer text-center">
+        <button type="button" class="btn btn-danger mx-1" @onclick="Eliminar">
+            <i class="bi bi-trash3"></i> Eliminar
+        </button>
+        <button type="button" class="btn btn-outline-primary mx-1" @onclick="Volver">
+            <i class="bi bi-arrow-return-left"></i> Volver
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int TrabajoId { get; set; }
+    public Trabajos? trabajos { get; set; } = new Trabajos();
+    public Clientes? clientes { get; set; } = new Clientes();
+    public Tecnicos? tecnicos { get; set; } = new Tecnicos();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar el trabajo actual
+        trabajos = await trabajoService.Buscar(TrabajoId);
+
+        if (trabajos != null)
+        {
+            // Buscar el cliente relacionado al trabajo
+            clientes = await clienteService.Buscar(trabajos.ClienteId);
+
+            // Buscar el técnico relacionado al trabajo
+            tecnicos = await tecnicoService.Buscar(trabajos.TecnicoId);
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        if (TrabajoId == 0 || trabajos == null)
+        {
+            return;
+        }
+
+        if (await trabajoService.Eliminar(TrabajoId))
+        {
+            Volver();
+        }
+    }
+
+    public void Volver()
+    {
+        navigationManager.NavigateTo("/Trabajo/Index");
+    }
+}
