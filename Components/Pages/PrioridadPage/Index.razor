@@ -1,0 +1,73 @@
+﻿@page "/Prioridades/Index"
+@inject PrioridadService prioridadService
+@inject NavigationManager navigationManager
+
+<PageTitle>Consulta Prioridades</PageTitle>
+<EditForm Model="ListaPrioridades" class="shadow-lg border p-3 rounded">
+    <div class="card-header bg-primary text-white text-center py-2 rounded">
+        <h3 style="font-weight: bold;" class="mb-0 font-weight-bold">Consulta Prioridades</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3 text-end">
+                <a href="/Prioridad/Create" class="btn btn-success" type="button">
+                    <i class="bi bi-pencil-square"></i> Crear
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th class="text-white">PrioridadId</th>
+                    <th class="text-white">Descripción</th>
+                    <th class="text-white">Tiempo</th>
+                    <th class="text-white">Detalle</th>
+                    <th class="text-white">Editar</th>
+                    <th class="text-white">Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var prioridad in ListaPrioridades)
+                {
+                    <tr>
+                        <td>@prioridad.PrioridadId</td>
+                        <td>@prioridad.Descripcion</td>
+                        <td>@prioridad.Tiempo</td>
+
+                        <td>
+                            <a href="/Prioridad/Details/@prioridad.PrioridadId" style="border: none; background-color: transparent;" class="btn-detalle">
+                                <span class="bi bi-eye" style="font-size: 2rem;"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/Prioridad/Edit/@prioridad.PrioridadId" style="border: none; background-color: transparent;" class="btn-editar">
+                                <span class="bi bi-pencil-square" style="font-size: 2rem;"></span>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/Prioridad/Delete/@prioridad.PrioridadId" style="border: none; background-color: transparent;" class="btn-eliminar">
+                                <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer text-start">
+        <p>Total de Prioridades: @ListaPrioridades.Count</p>
+    </div>
+</EditForm>
+
+@code 
+{
+    public List<Prioridades> ListaPrioridades { get; set; } = new List<Prioridades>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaPrioridades = await prioridadService.Listar(p => true);
+    }
+}

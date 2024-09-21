@@ -1,0 +1,128 @@
+﻿@page "/Prioridad/Edit/{PrioridadId:int}"
+@inject PrioridadService prioridadService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="prioridades" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3> <i class="fas fa-clipboard-list"></i> Modificar Prioridad</h3>
+        </div>
+
+        <div class="card-body">
+            <!-- PrioridadId -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="PrioridadId" class="form-label">PrioridadId:</label>
+                    <div class="input-group">
+                        <div style="width: 40%; height: 1em;">
+                            <InputNumber @bind-Value="prioridades.PrioridadId" class="form-control" style="font-size: 0.8em;" />
+                        </div>
+                        <ValidationMessage For="@(() => prioridades.PrioridadId)" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descripcion -->
+            <div class="mb-3">
+                <label for="Descripcion" class="form-label">Descripción:</label>
+                <InputText @bind-Value="prioridades.Descripcion" class="form-control" />
+                <ValidationMessage For="@(() => prioridades.Descripcion)" />
+                @if (Existe)
+                {
+                    <p class="text-danger">Ya existe una prioridad con esta descripción.</p>
+                }
+            </div>
+
+            <!-- Tiempo -->
+            <div class="mb-3">
+                <label for="Tiempo" class="form-label">Tiempo:</label>
+                <InputText @bind-Value="prioridades.Tiempo" class="form-control" />
+                <ValidationMessage For="@(() => prioridades.Tiempo)" />
+                @if (Existe)
+                {
+                    <p class="text-danger">Ya existe una prioridad con este Tiempo.</p>
+                }
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-light d-flex justify-content-center mt-3">
+            <div class="btn-group">
+                <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span> Guardar </button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar"><span class="bi bi-trash-fill"></span> Eliminar </button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Retroceder"><span class="bi bi-arrow-bar-left"></span> Retroceder </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code 
+{
+    [Parameter]
+    public int PrioridadId { get; set; }
+    public Prioridades? prioridades { get; set; } = new Prioridades();
+    private bool Existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (PrioridadId != 0)
+        {
+            await Buscar();
+        }
+    }
+
+    public async Task Nuevo()
+    {
+        prioridades = new Prioridades();
+        Existe = false;
+    }
+
+    public async Task Buscar()
+    {
+        Existe = false;
+        var prioridadEncontrada = await prioridadService.Buscar(PrioridadId);
+
+        if (prioridadEncontrada != null)
+        {
+            prioridades = prioridadEncontrada;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+        }
+
+        var guardado = await prioridadService.Guardar(prioridades);
+        if (guardado)
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Eliminar()
+    {
+        var eliminado = await prioridadService.Eliminar(prioridades.PrioridadId);
+        Nuevo();
+    }
+
+    private async Task Retroceder()
+    {
+        navigationManager.NavigateTo("/Prioridades/Index");
+    }
+
+    public async Task<bool> Validar()
+    {
+        var listaPrioridades = await prioridadService.Listar(p => p.Descripcion.ToLower() == prioridades.Descripcion.ToLower() && p.PrioridadId != prioridades.PrioridadId);
+        Existe = listaPrioridades.Any();
+        return Existe;
+    }
+}
