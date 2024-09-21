@@ -11,6 +11,7 @@ public class Contexto : DbContext
     public DbSet<Tipostecnicos> Tipostecnicos { get; set; }
     public DbSet<Clientes> Cliente { get; set; }
     public DbSet<Trabajos> Trabajos { get; set; }
+    public DbSet<Prioridades> Prioridad { get; set; }
 
 
 }
