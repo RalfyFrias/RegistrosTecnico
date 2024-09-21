@@ -36,6 +36,24 @@ namespace RegistroTecnicos.Migrations
                     b.ToTable("Cliente");
                 });
 
+            modelBuilder.Entity("RegistroTecnicos.Models.Prioridades", b =>
+                {
+                    b.Property<int>("PrioridadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Tiempo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("PrioridadId");
+
+                    b.ToTable("Prioridad");
+                });
+
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
                 {
                     b.Property<int>("TecnicoId")
@@ -100,6 +118,10 @@ namespace RegistroTecnicos.Migrations
 
                     b.HasKey("TrabajoId");
 
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("TecnicoId");
+
                     b.ToTable("Trabajos");
                 });
 
@@ -112,6 +134,25 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired();
 
                     b.Navigation("Tipostecnicos");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.Trabajos", b =>
+                {
+                    b.HasOne("RegistroTecnicos.Models.Clientes", "Clientes")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RegistroTecnicos.Models.Tecnicos", "Tecnicos")
+                        .WithMany()
+                        .HasForeignKey("TecnicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clientes");
+
+                    b.Navigation("Tecnicos");
                 });
 
             modelBuilder.Entity("RegistroTecnicos.Models.Tipostecnicos", b =>
