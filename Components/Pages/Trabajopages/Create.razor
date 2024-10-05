@@ -2,11 +2,13 @@
 @inject TrabajoService trabajoService
 @inject ClienteService clienteService
 @inject TecnicoService tecnicoService
+@inject PrioridadService prioridadService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
 <EditForm Model="trabajos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
+    <ValidationSummary />
     <div class="card shadow-lg border-0" style="background-color: white">
 
         <div class="card-header bg-primary text-center text-white py-2 rounded">
@@ -14,68 +16,85 @@
         </div>
 
         <div class="card-body">
+            <!-- TrabajoId field without validation -->
             <div class="col-md-10 mb-3">
                 <label for="TrabajoId" class="form-label">TrabajoId:</label>
                 <InputNumber @bind-Value="trabajos.TrabajoId" class="form-control" />
             </div>
 
+            <!-- Fecha field with validation -->
             <div class="mb-3">
                 <label for="Fecha" class="form-label">Fecha:</label>
                 <InputDate @bind-Value="trabajos.Fecha" class="form-control" />
                 <ValidationMessage For="@(() => trabajos.Fecha)" />
             </div>
 
+            <!-- ClienteId field with validation -->
             <div class="mb-3">
-                <label for="ClienteId" class="form-label">ClienteId:</label>
+                <label for="ClienteId" class="form-label">Cliente:</label>
                 <InputSelect @bind-Value="trabajos.ClienteId" class="form-control">
-                    <option value="0">Elija un cliente</option>
-                    @foreach (var clientes in ListaClientes)
+                    <option value="">Seleccione un cliente</option> <!-- opción vacía para obligar a elegir -->
+                    @foreach (var cliente in ListaClientes)
                     {
-                        <option value="@clientes.ClienteId">@clientes.Nombres</option>
-                    }
-                </InputSelect>
-                <ValidationMessage For="@(() => trabajos.ClienteId)" />
-            </div
-
-             <div class="mb-3">
-                <label for="TecnicoId" class="form-label">T&eacute;cnicoId:</label>
-                <InputSelect @bind-Value="trabajos.TecnicoId" class="form-control">
-                    <option value="0">Elija un T&eacute;cnico</option>
-                    @foreach (var tecnicos in ListaTecnicos)
-                    {
-                        <option value="@tecnicos.TecnicoId">@tecnicos.Nombre</option>
+                        <option value="@cliente.ClienteId">@cliente.Nombres</option>
                     }
                 </InputSelect>
                 <ValidationMessage For="@(() => trabajos.ClienteId)" />
             </div>
 
+            <!-- TecnicoId field with validation -->
             <div class="mb-3">
-                <label for="Descripcion" class="form-label">Descripci&oacute;n</label>
+                <label for="TecnicoId" class="form-label">Técnico:</label>
+                <InputSelect @bind-Value="trabajos.TecnicoId" class="form-control">
+                    <option value="">Seleccione un técnico</option> <!-- opción vacía para obligar a elegir -->
+                    @foreach (var tecnico in ListaTecnicos)
+                    {
+                        <option value="@tecnico.TecnicoId">@tecnico.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => trabajos.TecnicoId)" />
+            </div>
+
+            <!-- PrioridadId field with validation -->
+            <div class="mb-3">
+                <label for="PrioridadId" class="form-label">Prioridad:</label>
+                <InputSelect @bind-Value="trabajos.PrioridadId" class="form-control">
+                    <option value="">Seleccione una prioridad</option>
+                    @foreach (var prioridad in ListaPrioridad)
+                    {
+                        <option value="@prioridad.PrioridadId">@prioridad.Descripcion</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => trabajos.PrioridadId)" />
+            </div>
+
+            <!-- Descripcion field with validation -->
+            <div class="mb-3">
+                <label for="Descripcion" class="form-label">Descripción:</label>
                 <InputText @bind-Value="trabajos.Descripcion" class="form-control" />
                 <ValidationMessage For="@(() => trabajos.Descripcion)" />
             </div>
-        </div>
 
-          <div class="mb-3">
+            <!-- Monto field with validation -->
+            <div class="mb-3">
                 <label for="Monto" class="form-label">Monto:</label>
                 <InputNumber @bind-Value="trabajos.Monto" class="form-control" />
                 <ValidationMessage For="@(() => trabajos.Monto)" />
             </div>
         </div>
 
-        <div class="card-footer d-flex justify-content-lg-center text-center">
-            <div class="btn-group">
-                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">
-                    <span class="bi bi-plus"></span> Nuevo
-                </button>
-                <button type="submit" class="btn btn-outline-success">
-                    <span class="bi bi-check2-square"></span> Guardar
-                </button>
-                <button type="button" class="btn btn-outline-danger" @onclick="Volver">
-                    <span class="bi bi-arrow-90deg-left"></span> Volver
-                </button>
-            </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-outline-primary" @onclick="Nuevo">
+                <span class="bi bi-plus"></span> Nuevo
+            </button>
+            <button type="submit" class="btn btn-outline-success">
+                <span class="bi bi-check2-square"></span> Guardar
+            </button>
+            <button type="button" class="btn btn-outline-danger" @onclick="Volver">
+                <span class="bi bi-arrow-90deg-left"></span> Volver
+            </button>
         </div>
+    </div>
 </EditForm>
 
 @code {
@@ -84,12 +103,13 @@
     public Trabajos? trabajos { get; set; } = new Trabajos();
     public List<Clientes> ListaClientes = new List<Clientes>();
     public List<Tecnicos> ListaTecnicos = new List<Tecnicos>();
-    public List<Trabajos> listaTrabajos { get; set; } = new List<Trabajos>();
+    public List<Prioridades> ListaPrioridad = new List<Prioridades>();
 
     protected override async Task OnInitializedAsync()
     {
-    ListaClientes = await clienteService.Listar(c => true); 
-    ListaTecnicos = await tecnicoService.Listar(t => true);
+        ListaClientes = await clienteService.Listar(c => true);
+        ListaTecnicos = await tecnicoService.Listar(t => true);
+        ListaPrioridad = await trabajoService.ListarPrioridades();
     }
 
     public async Task Nuevo()
