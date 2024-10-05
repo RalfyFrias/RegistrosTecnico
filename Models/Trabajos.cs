@@ -8,19 +8,35 @@ public class Trabajos
 {
     [Key]
     public int TrabajoId { get; set; }
-    [Required(ErrorMessage = "Favor colocar una fecha")]
+
+    [Required(ErrorMessage = "Favor colocar una Fecha")]
     public DateTime Fecha { get; set; }
-    [Required (ErrorMessage ="Favor colocar un cliente")]
+
+    [Required(ErrorMessage = "Favor colocar un Cliente")]
     [ForeignKey("Clientes")]
-    public int ClienteId { get; set; }
+    public int? ClienteId { get; set; }
     public Clientes? Clientes { get; set; }
-    [Required(ErrorMessage = "Favor colocar un tecnico")]
+
+    [Required(ErrorMessage = "Favor Seleccionar un Técnico")]
     [ForeignKey("Tecnicos")]
-    public int TecnicoId { get; set; }
+    public int? TecnicoId { get; set; }
     public Tecnicos? Tecnicos { get; set; }
-    [Required(ErrorMessage = "Favor colocar una descripcion")]
+
+    [Required(ErrorMessage = "Favor Seleccionar una Descripción")]
+
     public string? Descripcion { get; set; }
-    [Required(ErrorMessage = "Favor colocar un monto")]
+
+    [Required(ErrorMessage = "Favor Colocar un Monto")]
+
     public decimal? Monto { get; set; }
 
+    [Required(ErrorMessage = "Favor seleccionar una Prioridad")]
+    [ForeignKey("Prioridades")]
+    public int? PrioridadId { get; set; }
+    public Prioridades? Prioridades { get; set; }
+
+
 }
+
+
+
