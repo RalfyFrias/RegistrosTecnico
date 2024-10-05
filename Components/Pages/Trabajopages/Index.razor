@@ -19,7 +19,8 @@
                 <th class="text-white">Fecha</th>
                 <th class="text-white">ClienteId</th>
                 <th class="text-white">T&eacute;cnicoId</th>
-                <th class="text-white">Descripci&oacute;on</th>
+                <th class="text-white">PrioridadId</th>
+                <th class="text-white">Descripci&oacute;n</th>
                 <th class="text-white">Monto</th>
                 <th class="text-white">Ver</th>
                 <th class="text-white">Editar</th>
@@ -34,11 +35,12 @@
                     <td>@trabajos.Fecha</td>
                     <td>@trabajos.Clientes?.Nombres</td>
                     <td>@trabajos.Tecnicos?.Nombre</td>
+                    <td>@trabajos.Prioridades?.Descripcion</td>                 
                     <td>@trabajos.Descripcion</td>
                     <td>@trabajos.Monto</td>
 
                     <td>
-                        <a href="Trabajo/Details/@trabajos.ClienteId" class="btn-detalle">
+                        <a href="Trabajo/Details/@trabajos.TrabajoId" class="btn-detalle">
                             <span class="bi bi-eye" style="font-size: 2rem;"></span>
                         </a>
                     </td>
