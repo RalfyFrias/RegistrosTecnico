@@ -65,8 +65,15 @@ namespace RegistroTecnicos.Services
               .AsNoTracking()
               .Include(t => t.Clientes)
               .Include(t => t.Tecnicos)
+              .Include(t => t.Prioridades)
             .Where(Criterio)
             .ToListAsync();
+        }
+        public async Task<List<Prioridades>> ListarPrioridades()
+        {
+            return await _contexto.Prioridad
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }
