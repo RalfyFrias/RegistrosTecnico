@@ -56,11 +56,11 @@ else
         {
             trabajos = await trabajoService.Buscar(TrabajoId);
 
-            if (trabajos?.ClienteId != 0)
+            if (trabajos.ClienteId != 0)
             {
                 clientes = await clienteService.Buscar(trabajos.ClienteId);
             }
-            if (trabajos?.TecnicoId != 0)
+            if (trabajos.TecnicoId != 0)
             {
                 tecnicos = await tecnicoService.Buscar(trabajos.TecnicoId);
             }

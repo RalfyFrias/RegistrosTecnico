@@ -14,12 +14,12 @@ public class Trabajos
 
     [Required(ErrorMessage = "Favor colocar un Cliente")]
     [ForeignKey("Clientes")]
-    public int? ClienteId { get; set; }
+    public int ClienteId { get; set; }
     public Clientes? Clientes { get; set; }
 
     [Required(ErrorMessage = "Favor Seleccionar un Técnico")]
     [ForeignKey("Tecnicos")]
-    public int? TecnicoId { get; set; }
+    public int TecnicoId { get; set; }
     public Tecnicos? Tecnicos { get; set; }
 
     [Required(ErrorMessage = "Favor Seleccionar una Descripción")]
