@@ -3,73 +3,130 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<EditForm Model="ListaTrabajos" class="border shadow-lg p-3 rounded">
-    <div class="card-header bg-primary text-center text-white py-2 rounded">
-        <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de trabajos</h3>
+<PageTitle>Trabajos</PageTitle>
+<div class="card-header bg-primary text-white text-center p-2 rounded">
+    <h3 style="font-weight: bold;" class="md-3 font-weight: bold;">Consulta Trabajos</h3>
+</div>
+ <div class="row md-3 align-content-center">
+    <div class="col-md-3">
+        <label for=" filtro" class="form-label">Filtrar Por:</label>
+        <select @bind="filtro" class="form-control">
+            <option value="Id">TrabajoId</option>
+            <option value="Fecha">Fecha</option>
+            <option value="Descripcion">Descripcion</option>
+            <option value="Monto">Monto</option>
+        </select>
     </div>
 
-    <div class="col md-3 text-end">
-        <a href="/Trabajo/Create" class="btn btn-success"><Icon Name="IconName.Pencil" />Crear</a>
+    <div class="col-md-5">
+        <label for=" valorfiltro" class="form-label">Busqueda:</label>
+        <div class="input-group">
+            <input @bind="valorfiltro" class="form-control" />
+            <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                <i class="bi bi-search-circle"></i>
+                Buscar
+            </button>
+        </div>
     </div>
 
-    <table class="table table-bordered text-center">
-        <thead class="bg-primary text-white">
-            <tr>
-                <th class="text-white">TrabajoId</th>
-                <th class="text-white">Fecha</th>
-                <th class="text-white">ClienteId</th>
-                <th class="text-white">T&eacute;cnicoId</th>
-                <th class="text-white">PrioridadId</th>
-                <th class="text-white">Descripci&oacute;n</th>
-                <th class="text-white">Monto</th>
-                <th class="text-white">Ver</th>
-                <th class="text-white">Editar</th>
-                <th class="text-white">Eliminar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var trabajos in ListaTrabajos)
-            {
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-15">
+                <div class="col-md-15 text-end">
+                    <a href=" /Trabajo/Create" class="btn btn-outline-success" type="button">
+                        <i class="bi bi-pencil-square"></i>
+                        Crear
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table table-responsive">
+        <table class="table table-striped   table-hover text-center">
+            <thead class="bg-white text-white">
                 <tr>
-                    <td>@trabajos.TrabajoId</td>
-                    <td>@trabajos.Fecha</td>
-                    <td>@trabajos.Clientes?.Nombres</td>
-                    <td>@trabajos.Tecnicos?.Nombre</td>
-                    <td>@trabajos.Prioridades?.Descripcion</td>                 
-                    <td>@trabajos.Descripcion</td>
-                    <td>@trabajos.Monto</td>
-
-                    <td>
-                        <a href="Trabajo/Details/@trabajos.TrabajoId" class="btn-detalle">
-                            <span class="bi bi-eye" style="font-size: 2rem;"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/Trabajo/Edit/@trabajos.TrabajoId" class="btn-editar">
-                            <span class="bi bi-pencil-square" style="font-size: 2rem;"></span>
-                        </a>
-                    </td>
-                    <td>
-                        <a href="/Trabajo/Delete/@trabajos.TrabajoId" class="btn-eliminar">
-                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
-                        </a>
-                    </td>
+                    <th>TrabajoId</th>
+                    <th>Fecha</th>
+                    <th>ClienteId</th>
+                    <th>TecnicoId</th>
+                    <th>PrioridadId</th>
+                    <th>Descripcion</th>
+                    <th>Monto</th>
+                    <th>Ver</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-
-    <div class="card-footer text-start">
-        <p>Total de Clientes: @ListaTrabajos.Count</p>
+            </thead>
+            <tbody>
+                @foreach (var t in Listatrabajos)
+                {
+                    <tr>
+                        <td>@t.TrabajoId</td>
+                        <td>@t.Fecha</td>
+                        <td>@t.Clientes?.Nombres</td>
+                        <td>@t.Tecnicos?.Nombre</td>
+                        <td>@t.Prioridades?.Descripcion</td>
+                        <td>@t.Descripcion</td>
+                        <td>@t.Monto</td>
+                        <td>
+                            <a href="/Trabajo/Details/@t.TrabajoId" class="btn btn-outline-primary">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/Trabajo/Edit/@t.TrabajoId" class="btn btn-outline-success">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/Trabajo/Delete/@t.TrabajoId" class="btn btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-</EditForm>
+</div>
+
 
 @code {
-    public Trabajos trabajos = new Trabajos();
-    public List<Trabajos> ListaTrabajos = new List<Trabajos>();
+    public int TrabajoId { get; set; }
+    public List<Trabajos> Listatrabajos { get; set; } = new List<Trabajos>();
+    public string filtro = "Id";
+    public string valorfiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
-        ListaTrabajos = await trabajoService.Listar(c => true);
+        Listatrabajos = await trabajoService.Listar(t => true);
     }
+
+    public async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(valorfiltro))
+        {
+            Listatrabajos = await trabajoService.Listar(t => true);
+        }
+        else
+        {
+            if (filtro == "Id" && int.TryParse(valorfiltro, out int TrabajoId))
+            {
+                Listatrabajos = await trabajoService.Listar(t => t.TrabajoId == TrabajoId);
+            }
+            else if (filtro == "Fecha" && DateTime.TryParse(valorfiltro, out DateTime Fecha))
+            {
+                Listatrabajos = await trabajoService.Listar(t => t.Fecha == Fecha);
+            }
+            else if (filtro == "Descripcion")
+            {
+                Listatrabajos = await trabajoService.Listar(t => t.Descripcion.Contains(valorfiltro));
+            }
+            else if (filtro == "Monto" && decimal.TryParse(valorfiltro, out decimal Monto))
+            {
+                Listatrabajos = await trabajoService.Listar(t => t.Monto == Monto);
+            }
+        }
+    }
+
 }

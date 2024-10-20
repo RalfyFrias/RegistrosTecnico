@@ -1,73 +1,158 @@
 ﻿@page "/Trabajo/Details"
 @page "/Trabajo/Details/{TrabajoId:int}"
-@inject TecnicoService tecnicoService
-@inject ClienteService clienteService
-@inject TrabajoService trabajoService
-@inject NavigationManager navigationManager
 @rendermode InteractiveServer
+@inject TrabajoService trabajosServices
+@inject ClienteService clientesServices
+@inject TecnicoService tecnicosServices
+@inject ArticuloService articulosServices
+@inject PrioridadService prioridadesServices
+@inject NavigationManager navigationManager
 
-<PageTitle>Detalles del Trabajo</PageTitle>
 
-@if (trabajos != null)
+@if (trabajo != null)
 {
     <div class="container">
-        <div class="card shadow-header">
-            <div class="card-header bg-primary text-white text-center py-2 rounded">
-                <h3 class="text-center"><strong>Detalles del Trabajo</strong></h3>
+        <div class="card shadow-lg">
+            
+            <div class="card-header bg-primary text-white text-center">
+                <h5><strong>Detalles del Trabajo</strong></h5>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card-body">
-                            <ul class="list-unstyled">
-                                <li><strong>TrabajoId:</strong> @trabajos.TrabajoId</li>
-                                <li><strong>Fecha:</strong> @trabajos.Fecha</li>
-                                <li><strong>ClienteId:</strong>@clientes.Nombres</li>
-                                <li><strong>T&eacute;cnicoId:</strong>@tecnicos.Nombre</li>
-                                <li><strong>Descripcion:</strong>@trabajos.Descripcion</li>
-                                <li><strong>Monto:</strong> @trabajos.Monto</li>
-                            </ul>
+            <div class="container mt-3">
+
+                <div class="card-body">
+                    @*   TrabajoId *@
+                    <div class="mb-3 row">
+                        <label for="TrabajoId" class="col-md-2 text-end col-form-label"><strong>TrabajoId:</strong></label>
+                        <div class="col-md-1">
+                            <p class="form-control-plaintext">@trabajo?.TrabajoId</p>
                         </div>
                     </div>
+                    @*   Fecha *@
+                    <div class="mb-3 row">
+                        <label for="Fecha" class="col-md-2 text-end col-form-label"><strong>Fecha:</strong></label>
+                        <div class="col-md-3">
+                            <p class="form-control-plaintext">@trabajo?.Fecha</p>
+                        </div>
+                    </div>
+                    @*    ClienteId *@
+                    <div class="mb-3 row">
+                        <label for="Cliente" class="col-md-2 text-end col-form-label"><strong>ClienteId:</strong></label>
+                        <div class="col-md-1">
+                            <p class="form-control-plaintext">@cliente?.Nombres</p>
+                        </div>
+                    </div>
+                    @* TecnicoId *@
+                    <div class="mb-3 row">
+                        <label for="Tecnico" class="col-md-2 text-end col-form-label"><strong>TécnicoId:</strong></label>
+                        <div class="col-md-1">
+                            <p class="form-control-plaintext">@tecnico?.Nombre</p>
+                        </div>
+                    </div>
+                    @* PrioridadId  *@
+                    <div class="mb-3 row">
+                        <label for="Prioridad" class="col-md-2 text-end col-form-label"><strong>PrioridadId:</strong></label>
+                        <div class="col-md-1">
+                            <p class="form-control-plaintext">@prioridad?.Descripcion</p>
+                        </div>
+                    </div>
+                    @*  Descripcion *@
+                    <div class="mb-3 row">
+                        <label for="Descripcion" class="col-md-2 text-end col-form-label"><strong>Descripci&oacute;n:</strong></label>
+                        <div class="col-md-1">
+                            <p class="form-control-plaintext">@trabajo?.Descripcion</p>
+                        </div>
+                    </div>
+                    @*  Monto *@
+                    <div class="mb-3 row">
+                        <label for="Monto" class="col-md-2 text-end col-form-label"><strong>Monto:</strong></label>
+                        <div class="col-md-1">
+                            <p class="form-control-plaintext">@trabajo?.Monto</p>
+                        </div>
+                    </div>
+
+                    <div class="card shadow-lg mt-3 border-success">
+                        <h5 class="card-header ">Detalles TrabajosDetalle</h5>
+
+                        <table class="table table-light table-bordered">
+                            <thead class="table table-striped text-center">
+                                <tr>
+                                    <th>ArticuloId</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var detalle in trabajo.TrabajosDetalle)
+                                {
+                                    var descripcionArticulo = ListaArticulos.FirstOrDefault(a => a.ArticuloId == detalle.ArticuloId)?.Descripcion ?? "No encontrado";
+                                    <tr>
+                                        <td>@descripcionArticulo</td>
+                                        <td>@detalle.Cantidad</td>
+                                        <td>@detalle.Precio.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer justify-content-center text-center">
+                        <button type="button" @onclick="Volver" class="btn btn-outline-primary">
+                            <span class="bi bi-arrow-left mt-3"></span> Volver
+                        </button>
+                        <button type="button" @onclick="EnviarMensajeWhatsApp" class="btn btn-outline-success">
+                            <span class="bi bi-whatsapp mt-3"></span> Finalizar
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="card-footer">
-                <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left"></i> Volver</button>
+               
             </div>
         </div>
     </div>
 }
 else
 {
-    <p>Técnico no encontrado.</p>
+    <p>No se encontró el trabajo.</p>
 }
 
 @code {
     [Parameter]
     public int TrabajoId { get; set; }
-
-    public Trabajos? trabajos { get; set; } = new Trabajos();
-    public Clientes? clientes { get; set; } = new Clientes();
-    public Tecnicos? tecnicos { get; set; } = new Tecnicos();
-
+    public Trabajos? trabajo { get; set; }
+    public Clientes? cliente { get; set; }
+    public Tecnicos? tecnico { get; set; }
+    public Prioridades? prioridad { get; set; }
+    public List<Articulos> ListaArticulos { get; set; } = new List<Articulos>();
     protected override async Task OnInitializedAsync()
     {
-        if (TrabajoId != 0)
+        trabajo = await trabajosServices.Buscar(TrabajoId);
+        if (trabajo != null)
         {
-            trabajos = await trabajoService.Buscar(TrabajoId);
-
-            if (trabajos.ClienteId != 0)
-            {
-                clientes = await clienteService.Buscar(trabajos.ClienteId);
-            }
-            if (trabajos.TecnicoId != 0)
-            {
-                tecnicos = await tecnicoService.Buscar(trabajos.TecnicoId);
-            }
+            cliente = await clientesServices.Buscar(trabajo.ClienteId);
+            tecnico = await tecnicosServices.Buscar(trabajo.TecnicoId);
+        
+            ListaArticulos = await articulosServices.ListarArticulos();
         }
     }
 
-    public void Volver()
+    private string ObtenerUrlWhatsApp()
+    {
+        if (cliente?.WhatsApp != null)
+        {
+            string mensaje = $"El trabajo con ID {trabajo?.TrabajoId} para {cliente?.Nombres} ya está finalizado.";
+            return $"https://wa.me/{cliente.WhatsApp}?text={Uri.EscapeDataString(mensaje)}";
+        }
+        return "#";
+    }
+
+    private async Task EnviarMensajeWhatsApp()
+    {
+        string urlWhatsApp = ObtenerUrlWhatsApp();
+        if (urlWhatsApp != "#")
+        {
+            navigationManager.NavigateTo(urlWhatsApp, true);
+        }
+    }
+
+    public async Task Volver()
     {
         navigationManager.NavigateTo("/Trabajo/Index");
     }
