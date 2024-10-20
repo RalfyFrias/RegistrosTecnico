@@ -11,6 +11,7 @@ namespace RegistroTecnicos.Models
         [Required(ErrorMessage = "El Campo Descripción es obligatorio")]
 
         public string? Tiempo { get; set; }
-    
+        public Trabajos? Trabajos { get; set; }
+
     }
 }
