@@ -47,7 +47,9 @@ namespace RegistroTecnicos.Services
 
         public async Task<bool> Eliminar(int id)
         {
-            var eliminado = await _contexto.Trabajos.Where(t => t.TrabajoId == id).ExecuteDeleteAsync();
+            var eliminado = await _contexto.Trabajos
+                .Where(t => t.TrabajoId == id)
+                .ExecuteDeleteAsync();
             return eliminado > 0;
         }
 
@@ -68,6 +70,14 @@ namespace RegistroTecnicos.Services
               .Include(t => t.Prioridades)
             .Where(Criterio)
             .ToListAsync();
+        }
+        public async Task<List<TrabajosDetalle>> ListarDetalles(int trabajoId)
+        {
+
+            var detalles = await _contexto.TrabajosDetalle
+                .Where(td => td.TrabajoId == trabajoId)
+                .ToListAsync();
+            return detalles;
         }
         public async Task<List<Prioridades>> ListarPrioridades()
         {
