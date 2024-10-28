@@ -1,0 +1,72 @@
+﻿@page "/Tecnico/Index"
+@inject TecnicoService tecnicoService
+@inject TiposTecnicosService tipotecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="ListaTecnicos" class="border shadow-lg p-3 rounded">
+    <div class="card-header bg-primary text-center text-white py-2 rounded">
+        <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de T&eacute;cnicos</h3>
+    </div>
+    <div class="col md-3 text-end">
+        <a href="/Tecnico/Create" class="btn btn-success"<Icon Name="IconName.Pencil"/>Crear</a>
+    </div>
+
+    <table class="table table-bordered text-center">
+        <thead class="bg-primary text-white">
+            <tr>
+                <th class="text-white">T&eacute;cnicoId</th>
+                <th class="text-white">Nombres</th>
+                <th class="text-white">Tipo Tecnico</th>
+                <th class="text-white">SueldoHora</th>
+                <th class="text-white">Ver</th>
+                <th class="text-white">Editar</th>
+                <th class="text-white">Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tecnicos in ListaTecnicos)
+            {
+                <tr>
+                    <td>@tecnicos.TecnicoId</td>
+                    <td>@tecnicos.Nombre</td>
+                    <!-- Mostrar la Descripción del Tipo de Técnico -->
+                    <td>@(tipostecnicos.FirstOrDefault(t => t.TipoId == tecnicos.TipoId)?.Descripcion ?? "No disponible")</td>
+                    <td>@tecnicos.Sueldohora</td>
+
+                    <td>
+                        <a href="/Tecnico/Details/@tecnicos.TipoId" style="border: none; background-color: transparent;" class="btn-detalle">
+                            <span class="bi bi-eye" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Tecnico/Edit/@tecnicos.TipoId" style="border: none; background-color: transparent;" class="btn-editar">
+                            <span class="bi bi-pencil-square" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/Tecnico/Delete/@tecnicos.TipoId" style="border: none; background-color: transparent;" class="btn-eliminar">
+                            <span class="bi bi-dash-circle-fill" style="font-size: 2rem;"></span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="card-footer text-start">
+        <p>Total de T&eacute;cnicos: @ListaTecnicos.Count</p>
+
+    </div>
+
+</EditForm>
+@code {
+    public Tecnicos tecnicos = new Tecnicos();
+    public List<Tecnicos> ListaTecnicos = new List<Tecnicos>();
+    public List<Tipostecnicos> tipostecnicos = new List<Tipostecnicos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTecnicos = await tecnicoService.Listar(t => true);
+        tipostecnicos  = await tipotecnicoService.Listar(t => true);
+    }
+}
