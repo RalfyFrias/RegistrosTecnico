@@ -16,10 +16,8 @@ namespace RegistroTecnicos
                 .AddInteractiveServerComponents();
 
             //Obtenemos el ConStr para usarlo en el contexto
-            var ConStr = builder.Configuration.GetConnectionString("ConStr");
-
-            //Agregamos el contexto al builder con el ConStr
-            builder.Services.AddDbContext<Contexto>(Options => Options.UseSqlite(ConStr));
+            var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+            builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
 
             builder.Services.AddScoped<TecnicoService>();
             builder.Services.AddScoped<TiposTecnicosService>();
@@ -27,7 +25,7 @@ namespace RegistroTecnicos
             builder.Services.AddScoped<TrabajoService>();
             builder.Services.AddScoped<PrioridadService>();
             builder.Services.AddScoped<ArticuloService>();
-
+            builder.Services.AddScoped<CotizacionesServices>();
             builder.Services.AddBlazorBootstrap();
             var app = builder.Build();
 

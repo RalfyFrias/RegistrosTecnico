@@ -9,21 +9,25 @@
 
 <EditForm Model="trabajo" OnValidSubmit=" Guardar">
     <DataAnnotationsValidator />
+
     <div class="card-header bg-primary text-white text-center">
         <h5><strong>Registro Trabajos</strong></h5>
     </div>
+
     <div class="card-body">
         @*  TrabajoId *@
         <div class="mb-3">
             <label for="TrabajoId" class="form-label"><strong>TrabajoId:</strong></label>
             <InputNumber @bind-Value="trabajo.TrabajoId" class="form-control" />
         </div>
+
         @*  Fecha *@
         <div class="mb-3">
             <label for="Fecha" class="form-label"><strong>Fecha:</strong></label>
             <InputDate @bind-Value="trabajo.Fecha" class="form-control" />
             <ValidationMessage For="@(() => trabajo.Fecha)" />
         </div>
+
         @*  ClienteId *@
         <div class="mb-3">
             <label for="ClienteId" class="form-label"><strong>ClienteId:</strong></label>
@@ -36,6 +40,7 @@
             </InputSelect>
             <ValidationMessage For="@(() => trabajo.ClienteId)" />
         </div>
+
         @*  TecnicoId *@
         <div class="mb-3">
             <label for="TecnicoId" class="form-label"><strong>TécnicoId:</strong></label>
@@ -48,6 +53,7 @@
             </InputSelect>
             <ValidationMessage For="@(() => trabajo.TecnicoId)" />
         </div>
+
         @* PrioridadId  *@
         <div class="mb-3">
             <label for="PrioridadId" class="form-label"><strong>PrioridadId:</strong></label>
